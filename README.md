@@ -30,4 +30,4 @@ First, run the server with above command, and run client.
 
 If you have any question, don't hesitate to send an e-mail to [T.Kim](thkim@calab.kaist.ac.kr).
 
-From T. Kim, J. Park, J. Woo, S. Jeon
+From T. Kim, J. Park, J. Woo, S. Jeon J. Huh
