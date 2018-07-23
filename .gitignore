@@ -1,0 +1,16 @@
+App/App.o
+App/Enclave_u.c
+App/Enclave_u.h
+App/Enclave_u.o
+App/ErrorSupport.o
+App/spinlock.o
+Enclave/Enclave.o
+Enclave/Enclave_t.c
+Enclave/Enclave_t.h
+Enclave/Enclave_t.o
+Enclave/gperftools/gperftools-2.5/src/*.o
+Enclave/gperftools/gperftools-2.5/src/base/*.o
+app
+libenclave.signed.so
+libenclave.so
+result.txt

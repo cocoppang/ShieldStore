@@ -1,0 +1,21 @@
+enclave {
+	// Import the Ocalls for trusted mutex
+	from "sgx_tstdc.edl" import *;
+
+	include "sgx_thread.h"
+	include "common.h"
+	include "hot_calls.h"
+
+    trusted {
+		public void enclave_init_tree_root([in] hashtable* ht, [in] MACbuffer* MACbuf);
+	//	public void enclave_process([in] hashtable *ht, [in] MACbuffer *MACbuf, [user_check] HotCall* hotOcall);
+        	public void EcallStartResponder( [user_check] HotCall* fastEcall );                                                                                           
+    };
+	untrusted {
+
+		void* sbrk_o(size_t size);
+		void print([in, string] const char *str);
+		void PRINT_FOR_DEBUGING([in, size = len] void* mem, uint32_t len);
+		void dummy();
+	};
+};

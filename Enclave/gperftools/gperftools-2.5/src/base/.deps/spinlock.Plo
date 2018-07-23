@@ -1,0 +1,62 @@
+src/base/spinlock.lo: src/base/spinlock.cc src/config.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_trts.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_error.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/stddef.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/cdefs.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/_types.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_thread.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdint.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/stdint.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_spinlock.h src/base/spinlock.h \
+ src/base/atomicops.h src/base/arm_instruction_set_select.h \
+ src/base/atomicops-internals-x86.h src/base/basictypes.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/string.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/inttypes.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/types.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/endian.h \
+ src/base/dynamic_annotations.h src/base/thread_annotations.h
+
+src/config.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_trts.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_error.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/stddef.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/cdefs.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/_types.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_thread.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdint.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/stdint.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_spinlock.h:
+
+src/base/spinlock.h:
+
+src/base/atomicops.h:
+
+src/base/arm_instruction_set_select.h:
+
+src/base/atomicops-internals-x86.h:
+
+src/base/basictypes.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/string.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/inttypes.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/types.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/endian.h:
+
+src/base/dynamic_annotations.h:
+
+src/base/thread_annotations.h:

@@ -1,0 +1,255 @@
+src/base/sgx_utils.lo: src/base/sgx_utils.cc \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/string.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/cdefs.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/_types.h \
+ src/base/commandlineflags.h src/config.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_trts.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_error.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/stddef.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_thread.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdint.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/stdint.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_spinlock.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/string \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_prolog.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cprolog.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/features.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stlport_version.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_sgx.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/user_config.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/compat.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/host.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_system.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_linux.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/features.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/endian.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_gcc.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/stl_confix.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_native_headers.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/debug/_debug.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_alloc.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstddef.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstdlib.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdlib.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cmath.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/math.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/limits.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/float.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstring.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/using/cstring \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_algobase.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/climits \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/limits.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_pair.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/type_traits.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/type_manips.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_iterator_base.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_ptrs_specialize.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_algobase.c \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function_base.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_iterator.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_new.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/stdc++/new \
+ /home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/exception \
+ /home/sgx1/sgx/linux-sgx/common/inc/stdc++/exception \
+ /home/sgx1/sgx/linux-sgx/common/inc/stdc++/linux/exception \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_construct.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_alloc.c \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_fwd.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/char_traits.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/types.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cwchar.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/wchar.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_mbstate_t.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_uninitialized.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_base.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_npos.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_operators.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string.c \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_ctraits_fns.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function_adaptors.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_range_errors.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_range_errors.c \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stdexcept.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stdexcept_base.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_exception.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_hash.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_hash_fun.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_epilog.h \
+ /home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_config_compat_post.h \
+ src/base/basictypes.h \
+ /home/sgx1/sgx/linux-sgx/common/inc/tlibc/inttypes.h
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/string.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/cdefs.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/_types.h:
+
+src/base/commandlineflags.h:
+
+src/config.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_trts.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_error.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/stddef.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_thread.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdint.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/stdint.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_spinlock.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/string:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_prolog.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cprolog.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/features.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stlport_version.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_sgx.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/user_config.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/compat.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/host.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_system.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_linux.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/features.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/endian.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_gcc.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/stl_confix.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/config/_native_headers.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/debug/_debug.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_alloc.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstddef.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstdlib.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/stdlib.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cmath.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/math.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/limits.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/float.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cstring.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/using/cstring:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_algobase.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/climits:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/limits.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_pair.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/type_traits.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/type_manips.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_iterator_base.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_ptrs_specialize.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_algobase.c:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function_base.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_iterator.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_new.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/stdc++/new:
+
+/home/sgx1/sgx/linux-sgx/common/inc/sgx_defs.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/exception:
+
+/home/sgx1/sgx/linux-sgx/common/inc/stdc++/exception:
+
+/home/sgx1/sgx/linux-sgx/common/inc/stdc++/linux/exception:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_construct.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_alloc.c:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_fwd.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/char_traits.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/sys/types.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_cwchar.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/wchar.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_mbstate_t.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_uninitialized.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_base.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_npos.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_operators.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string.c:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_ctraits_fns.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_function_adaptors.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_range_errors.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_range_errors.c:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stdexcept.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_stdexcept_base.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_exception.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_string_hash.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_hash_fun.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_epilog.h:
+
+/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport/stl/_config_compat_post.h:
+
+src/base/basictypes.h:
+
+/home/sgx1/sgx/linux-sgx/common/inc/tlibc/inttypes.h:
