@@ -2,6 +2,11 @@
 
 This is secure key-value storage using Intel SGX.
 
+## Under Construction!
+
+Current version is not the lastest version. 
+The code will be updated soon!
+
 ## Dependencies
 
 ### Hardware
