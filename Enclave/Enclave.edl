@@ -6,16 +6,14 @@ enclave {
 	include "common.h"
 	include "hot_calls.h"
 
-    trusted {
-		public void enclave_init_tree_root([in] hashtable* ht, [in] MACbuffer* MACbuf);
-	//	public void enclave_process([in] hashtable *ht, [in] MACbuffer *MACbuf, [user_check] HotCall* hotOcall);
-        	public void EcallStartResponder( [user_check] HotCall* fastEcall );                                                                                           
+   trusted {
+		public void enclave_init_values([in] hashtable* ht, [in] MACbuffer* MACbuf, Arg arg);
+		public void enclave_worker_thread([in] hashtable *ht, [in] MACbuffer *MACbuf);
+        public void EcallStartResponder( [user_check] HotCall* fastEcall );                                                                                           
     };
 	untrusted {
-
+		void message_return([in, size = ret_size] char* ret, size_t ret_size, int client_sock);
 		void* sbrk_o(size_t size);
 		void print([in, string] const char *str);
-		void PRINT_FOR_DEBUGING([in, size = len] void* mem, uint32_t len);
-		void dummy();
 	};
 };

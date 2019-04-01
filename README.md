@@ -1,11 +1,6 @@
 # ShieldStore
 
-This is secure key-value storage using Intel SGX.
-
-## Under Construction!
-
-Current version is not the lastest version. 
-The code will be updated soon!
+ShieldStore is a prototype of trusted in-memory key-value stores with Intel SGX based on EuroSys 2019 paper.
 
 ## Dependencies
 
@@ -24,12 +19,17 @@ For the support of Intel SGX, sgx-linux should be required.
 
 ## Build
 
-	$ make SGX_MODE=HW SGX_PRERELEASE=1 VAL_SIZE=[SMALL, MEDIUM, LARGE]
+	$ make SGX_MODE=HW SGX_PRERELEASE=1 
 
 ## Usange
 	$ ./app	
 
 First, run the server with above command, and run client.
+
+## Paper
+
+For the details, please refer this paper.
+"ShieldStore: Shiled In-memory Key-value Storage with SGX" [EuroSys'19]
 
 ## Question?
 

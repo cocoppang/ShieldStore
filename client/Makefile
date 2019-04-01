@@ -1,21 +1,11 @@
-###### SET VALUE SIZE FOR EXPERIMENTS ######
 
-VAL_SIZE ?= SMALL
-ifeq ($(VAL_SIZE), SMALL)
-MODE = -DSMALL
-endif
-ifeq ($(VAL_SIZE), MEDIUM)
-MODE = -DMEDIUM
-endif
-ifeq ($(VAL_SIZE), LARGE)
-MODE = -DLARGE
-endif
+all: load run
 
-############################################
+load: client_load.c
+	gcc -O2 -g -o $@ $^ -lpthread
 
-all: client
+run: client_run.c
+	gcc -O2 -g -o $@ $^ -lpthread
 
-client: mydb_client.c
-	gcc -O2 $(MODE) -o mydb_client mydb_client.c -lpthread
 clean:
-	rm -rf mydb_client
+	rm -rf run load

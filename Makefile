@@ -191,31 +191,6 @@ endif
 endif
 endif
 
-###### SET VALUE SIZE FOR EXPERIMENTS ######
-
-VAL_SIZE ?= SMALL
-ifeq ($(VAL_SIZE), SMALL)
-App_Compile_CFlags += -DSMALL
-App_Compile_CXXFlags += -DSMALL
-Enclave_Compile_CFlags += -DSMALL
-Enclave_Compile_CXXFlags += -DSMALL
-endif
-ifeq ($(VAL_SIZE), MEDIUM)
-App_Compile_CFlags += -DMEDIUM
-App_Compile_CXXFlags += -DMEDIUM
-Enclave_Compile_CFlags += -DMEDIUM
-Enclave_Compile_CXXFlags += -DMEDIUM
-endif
-ifeq ($(VAL_SIZE), LARGE)
-App_Compile_CFlags += -DLARGE
-App_Compile_CXXFlags += -DLARGE
-Enclave_Compile_CFlags += -DLARGE
-Enclave_Compile_CXXFlags += -DLARGE
-endif
-
-############################################
-
-
 ifeq ($(Build_Mode), HW_RELEASE)
 all: $(App_Name) $(Enclave_Name)
 	@echo "The project has been built in release hardware mode."

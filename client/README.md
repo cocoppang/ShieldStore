@@ -3,16 +3,23 @@
 Client for ShieldStore
 
 ## Build
-	$ make VAL_SIZE=[SMALL, MEDIUM, LARGE]
-	
-Value size should be defined.(SMALL 16byte, MEDIUM 128byte, LARGE 512byte)
+
+	$ make
 
 ## Usage
-	$ ./mydb_client [port number] [workload_name]
+
+For load operation on key-value stores,
+
+	$ ./load
+
+For run operation on key-value stores,
+
+	$ ./run
+
 
 ## Workloads
 
-In this sample file, it uses 10Million Set operation for LOAD, and 30Million SET/GET operation for RUN 
+In this sample file, it uses 500 Set operation for LOAD, and 500 SET/GET operation for RUN 
 with key size: 16Bytes, value size: 16Bytes.
 
 
