@@ -26,6 +26,10 @@ For the support of Intel SGX, sgx-linux should be required.
 
 First, run the server with above command, and run client.
 
+
+Limitation: For the persistent support, we run the experiments with 1 server working thread.
+			We will test shieldstore with persistent support with multiple threads.
+
 ## Paper
 
 For the details, please refer this paper.

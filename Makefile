@@ -73,7 +73,7 @@ else
 	Urts_Library_Name := sgx_urts
 endif
 
-App_Cpp_Files := $(wildcard App/*.cpp)
+App_Cpp_Files := $(wildcard App/*.cpp) $(wildcard App/Sealing/*.cpp)
 App_Include_Paths := -I$(SGX_SDK)/include -I./Common
 
 App_Compile_CFlags := -fPIC -Wno-attributes $(App_Include_Paths)
@@ -117,7 +117,7 @@ else
 endif
 Crypto_Library_Name := sgx_tcrypto
 
-Enclave_Cpp_Files := $(wildcard Enclave/*.cpp)
+Enclave_Cpp_Files := $(wildcard Enclave/*.cpp) $(wildcard Enclave/Sealing/*.cpp)
 
 Enclave_Include_Paths := -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport -I./Common -I./Enclave
 
@@ -209,7 +209,7 @@ endif
 ######## App Objects ########
 
 $(Gen_Untrusted_Source): $(SGX_EDGER8R) Enclave/Enclave.edl
-	@cd App && $(SGX_EDGER8R) --untrusted ../Enclave/Enclave.edl --search-path $(SGX_SDK)/include
+	@cd App && $(SGX_EDGER8R) --untrusted ../Enclave/Enclave.edl --search-path ../Enclave --search-path $(SGX_SDK)/include
 	@echo "GEN  =>  $@"
 
 $(Gen_Untrusted_Object): $(Gen_Untrusted_Source)
@@ -231,7 +231,7 @@ $(App_Name): $(App_Objects)
 ######## Enclave Objects ########
 
 $(Gen_Trusted_Source): $(SGX_EDGER8R) Enclave/Enclave.edl
-	@cd Enclave && $(SGX_EDGER8R) --trusted Enclave.edl --search-path $(SGX_SDK)/include
+	@cd Enclave && $(SGX_EDGER8R) --trusted Enclave.edl --search-path ../Enclave --search-path $(SGX_SDK)/include
 	@echo "GEN  =>  $@"
 $(Gen_Trusted_Object): $(Gen_Trusted_Source)
 	@$(CC) $(SGX_COMMON_CFLAGS) $(Enclave_Compile_CFlags) -c $< -o $@

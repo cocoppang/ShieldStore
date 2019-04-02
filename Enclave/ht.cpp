@@ -1,5 +1,8 @@
 #include "Enclave.h"
 
+/**
+ * Hash function for key-hint 
+ **/
 uint8_t key_hash_func(char *key){
 	unsigned long int hashval = 7;
 	int i = 0;
@@ -14,7 +17,9 @@ uint8_t key_hash_func(char *key){
 }
 
 
-/* Hash a string for a particular hash table. */
+/** 
+ * Hash a string for a particular hash table.
+ **/
 int ht_hash(char *key){
 	unsigned long int hashval = 7;
 	int i = 0;
@@ -28,7 +33,9 @@ int ht_hash(char *key){
 	return hashval % ht_enclave->size;
 }
 
-/* Retrieve a key-value pair from a hash table. */
+/**
+ * Retrieve a key-value pair from a hash table. 
+ **/
 entry * ht_get_o(char *key, int32_t key_size, char **plain_key_val, int* kv_pos, uint8_t (&updated_nac)[NAC_SIZE]){
 	int bin = 0;
 	uint8_t key_hash = 0;
@@ -96,7 +103,9 @@ entry * ht_get_o(char *key, int32_t key_size, char **plain_key_val, int* kv_pos,
 
 }
 
-/* Create a key-value pair. */
+/**
+ * Create a key-value pair. 
+ **/
 entry * ht_newpair(int key_size, int val_size, uint8_t key_hash, char *key_val, uint8_t *nac, uint8_t *mac){
 	entry *newpair;
 
@@ -118,7 +127,8 @@ entry * ht_newpair(int key_size, int val_size, uint8_t key_hash, char *key_val, 
 	return newpair;
 }
 
-/* Insert a key-value pair into a hash table. */
+/** Insert a key-value pair into a hash table. 
+ **/
 void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint8_t *mac, uint32_t key_len, uint32_t val_len, int kv_pos) {
 	int bin = 0;
 	uint8_t key_hash = 0;
@@ -170,7 +180,9 @@ void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint
 	}
 }
 
-/* append the value of key-value pair */
+/** 
+ * append the value of key-value pair 
+ **/
 void ht_append_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint8_t *mac, uint32_t key_len, uint32_t val_len, int kv_pos) {
 	int bin = 0;
 

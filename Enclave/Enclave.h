@@ -20,6 +20,41 @@
 #include <climits>
 #include <cassert>
 
+#include "sealed_data_defines.h"
+#define REPLAY_PROTECTED_SECRET_SIZE  1024
+
+typedef struct _bucketMAC
+{
+	uint8_t mac[MAC_SIZE];
+} BucketMAC;
+
+typedef struct _staging_entry 
+{ 
+	entry* kv_entry;
+	int kv_pos;
+	struct _staging_entry* next;
+} staging_entry;
+
+typedef struct _staging_hashtable 
+{
+	int size;
+	staging_entry** table;
+} staging_hashtable;
+
+typedef struct _activity_log
+{
+    uint32_t release_version;
+    uint32_t max_release_version;
+} activity_log;
+
+typedef struct _replay_protected_pay_load
+{
+    sgx_mc_uuid_t mc;
+    uint32_t mc_value;
+    uint8_t secret[REPLAY_PROTECTED_SECRET_SIZE];
+    activity_log log;
+} replay_protected_pay_load;
+
 /** Hash related functions **/
 int ht_hash(char *key);
 uint8_t key_hash_func(char *key);
@@ -48,18 +83,34 @@ void EcallStartResponder( HotCall* hotEcall );
 void enclave_init_values(hashtable* ht_, MACbuffer* MACbuf_, Arg arg);
 void enclave_worker_thread(hashtable *ht_, MACbuffer *MACbuf_);
 
+/** For sealing **/
+int ht_staging_hash(char* key);
+char* decrypt_and_get_key(char* cipher, uint32_t key_len, uint32_t val_len, uint8_t *nac);
+void delete_entry(entry* pair);
+void init_staging_hashtable(int size);
+void ht_replace_o(entry* replace_entry, char *key, int key_size);
+staging_entry* ht_get_staging_buffer_o(char *key, int key_size, int* kv_pos);
+void ht_set_staging_buffer_o(staging_entry* ret_entry, char *key, char *key_val, uint8_t *nac, uint8_t *mac, int key_len, int val_len, int kv_pos);
+void enclave_persist_done();
+void update_staging_buffer_in_kvs();
+
+void init_secret_object();
+void update_secret_object();
+uint8_t* get_secret_object();
+
+uint32_t create_sealed_policy(uint8_t* sealed_log, uint32_t sealed_log_size );
+uint32_t perform_sealed_policy(const uint8_t* sealed_log, uint32_t sealed_log_size);
+uint32_t update_sealed_policy(uint8_t* sealed_log, uint32_t sealed_log_size);
+uint32_t delete_sealed_policy(const uint8_t* sealed_log, uint32_t sealed_log_size);
+
 /* hash table */
 extern hashtable *ht_enclave;
 /* MAC buffer */
 extern MACbuffer *MACbuf_enclave;
+/* secret key */
+extern const sgx_ec_key_128bit_t gsk;
 
 extern int ratio_root_per_buckets;
-
-struct _bucketMAC{
-	uint8_t mac[MAC_SIZE];
-};
-typedef _bucketMAC BucketMAC;
-
 extern BucketMAC *MACTable;
 extern Arg arg_enclave;
 

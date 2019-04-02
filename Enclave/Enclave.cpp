@@ -11,6 +11,16 @@ BucketMAC* MACTable = NULL;
 Arg arg_enclave;
 int ratio_root_per_buckets = 0;
 
+//Flags for sealing
+uint8_t* sealed_activity_log_enclave = NULL;
+bool staging_flag = false;
+bool previous_staging_flag = false;
+bool run_flag_enclave = false;
+
+//for temporal uses
+int inst_count = 0;
+int load_done_count = 0;
+
 sgx_thread_mutex_t global_mutex;
 sgx_thread_mutex_t* queue_mutex;
 sgx_thread_cond_t* job_cond;
@@ -44,7 +54,9 @@ void enclave_init_values(hashtable* ht_, MACbuffer* MACbuf_, Arg arg) {
 	for(int i = 0 ; i < arg_enclave.num_threads; i++) {
 		queue.push_back(std::queue<job*>());	
 	}
-	
+
+	if(arg_enclave.persistent)
+		init_secret_object();
 }
 
 /** 
@@ -68,6 +80,7 @@ void enclave_set(char *cipher) {
 	char *tok;
 	char *temp_;
 	entry * ret_entry;
+	staging_entry * ret_entry_staging_buffer = NULL;
 
 	tok = strtok_r(cipher+4," ",&temp_);
 	key_size = strlen(tok)+1;
@@ -82,8 +95,22 @@ void enclave_set(char *cipher) {
 
 	int kv_pos = -1;
 
-	ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
-	
+	if(staging_flag == true) {
+		//First check the staging buffer
+		ret_entry_staging_buffer = ht_get_staging_buffer_o(key, key_size, &kv_pos);
+
+		if(ret_entry_staging_buffer == NULL) {
+			ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+		}
+		else {
+			ret_entry = ret_entry_staging_buffer->kv_entry;
+			memcpy(updated_nac, ret_entry->nac, NAC_SIZE);
+		}
+	}
+	else {
+		ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+	}
+
 	int hash_val = ht_hash(key);
 	key_idx = key_hash_func(key);
 
@@ -125,8 +152,15 @@ void enclave_set(char *cipher) {
 
 	enclave_encrypt(key_val, key_val, key_idx, key_size, val_size, nac, mac);
 
-	ht_set_o(ret_entry, key, key_val, nac, mac, key_size, val_size, kv_pos);
-
+	if(staging_flag == true) {
+		//write to staging buffer
+		ht_set_staging_buffer_o(ret_entry_staging_buffer, key, key_val, nac, mac, key_size, val_size, kv_pos);
+	}
+	else {
+		//write to kv table
+		ht_set_o(ret_entry, key, key_val, nac, mac, key_size, val_size, kv_pos);
+	}
+	
 	enclave_rebuild_tree_root(hash_val);
 
 	memset(cipher, 0, arg_enclave.max_buf_size);
@@ -149,6 +183,7 @@ void enclave_get(char *cipher){
 	char *tok;
 	char *temp_;
 	entry * ret_entry;
+	staging_entry * ret_entry_staging_buffer = NULL;
 
 	uint8_t updated_nac[NAC_SIZE];
 
@@ -159,7 +194,21 @@ void enclave_get(char *cipher){
 	memcpy(key, tok, key_size-1);
 
 	int kv_pos = -1;
-	ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+
+	if(staging_flag == true) {
+		//First check the staging buffer
+		ret_entry_staging_buffer = ht_get_staging_buffer_o(key, key_size, &kv_pos);
+		//If the entry is not found on staging buffer then check the kv table
+		if(ret_entry_staging_buffer == NULL) {
+			ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+		}
+		else {
+			ret_entry = ret_entry_staging_buffer->kv_entry;
+		}
+	}
+	else {
+		ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+	}
 
 	if(ret_entry == NULL){
 		print("GET FAILED: No data in database");
@@ -213,6 +262,7 @@ void enclave_append(char *cipher){
 	char *tok;
 	char *temp_;
 	entry * ret_entry;
+	staging_entry * ret_entry_staging_buffer = NULL;
 
 	tok = strtok_r(cipher+4," ",&temp_);
 	key_size = strlen(tok)+1;
@@ -227,7 +277,21 @@ void enclave_append(char *cipher){
 
 	int kv_pos = -1;
 
-	ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+	if(staging_flag == true) {
+		//First check the staging buffer
+		ret_entry_staging_buffer = ht_get_staging_buffer_o(key, key_size, &kv_pos);
+		//If the entry is not found on staging buffer then check the kv table
+		if(ret_entry_staging_buffer == NULL) {
+			ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+		}
+		else {
+			ret_entry = ret_entry_staging_buffer->kv_entry;
+			memcpy(updated_nac, ret_entry->nac, NAC_SIZE);
+		}
+	}
+	else {
+		ret_entry = ht_get_o(key, key_size, &plain_key_val, &kv_pos, updated_nac);
+	}
 
 	int hash_val = ht_hash(key);
 	key_idx = key_hash_func(key);
@@ -269,8 +333,16 @@ void enclave_append(char *cipher){
 	memcpy(key_val + ret_entry->key_size + ret_entry->val_size - 1, val, val_size);
 
 	enclave_encrypt(key_val, key_val, key_idx, key_size, ret_entry->val_size + val_size - 1, nac, mac);
-
-	ht_append_o(ret_entry, key, key_val, nac, mac, key_size, ret_entry->val_size + val_size - 1, kv_pos);
+	
+	/* Store key, con and mac together on the hash table */
+	if(staging_flag == true) {
+		//write to staging buffer
+		ht_set_staging_buffer_o(ret_entry_staging_buffer, key, key_val, nac, mac, key_size, ret_entry->val_size + val_size - 1, kv_pos);
+	}
+	else {
+		//append directly on kv table 
+		ht_append_o(ret_entry, key, key_val, nac, mac, key_size, ret_entry->val_size + val_size - 1, kv_pos);
+	}
 
 	enclave_rebuild_tree_root(hash_val);
 
@@ -368,6 +440,7 @@ void enclave_message_pass(void* data) {
 	char* cipher = ecallParams->buf;
 	int client_sock = ecallParams->client_sock_;
 	int num_clients = ecallParams->num_clients_;
+	bool child_done = ecallParams->child_done_;
 
 	char* key;
 	uint32_t key_size;
@@ -400,10 +473,44 @@ void enclave_message_pass(void* data) {
 	}
 	else if(strncmp(cipher, "LOADDONE", 8) == 0)
 	{
+		load_done_count++;
+		if(load_done_count == num_clients) {
+			run_flag_enclave = true;
+		}
+
 		print("Load process is done");
 		message_return(cipher, arg_enclave.max_buf_size, client_sock);
 	}
 	else {
+
+		if(arg_enclave.persistent) {
+			if(child_done == true) {
+				if(staging_flag == true) {
+					staging_flag = false;
+				}
+			}
+			if(previous_staging_flag != staging_flag) {
+				if(previous_staging_flag == true && staging_flag == false) {
+					/* update_staging_buffer_in_kvs does not hurt the perfomrance a lot.. it takes just 0-1 sec */
+					update_staging_buffer_in_kvs();
+				}
+				previous_staging_flag = staging_flag;
+			}
+
+			if(run_flag_enclave == true && inst_count == 0) {
+				/** TODO after specific requests are processed, not the load process is done **/
+				update_sealed_policy(sealed_activity_log_enclave, SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
+				persistent_process();
+				//init_staging_hashtable(1024);
+				init_staging_hashtable(8*1024*1024);
+				//staging phase : put the write request on the staging buffer
+				//Assume that parent process finish the job earlier than child process
+				if(staging_flag == false) {
+					staging_flag = true;
+				}
+				print("parent persistent support done");
+			}
+		}
 
 		new_job = (job*)malloc(sizeof(job));
 		new_job->buf = (char*)malloc(sizeof(char)*arg_enclave.max_buf_size);
@@ -420,6 +527,10 @@ void enclave_message_pass(void* data) {
 		//send the requests to specific worker thread
 		thread_id = (int)(ht_hash(key)/(ht_enclave->size/arg_enclave.num_threads));
 		free(key);
+
+		if(run_flag_enclave == true) 
+			inst_count++;
+
 		sgx_thread_mutex_lock(&queue_mutex[thread_id]);
 		queue[thread_id].push(new_job);
 		sgx_thread_cond_signal(&job_cond[thread_id]);

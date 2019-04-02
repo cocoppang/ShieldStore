@@ -7,6 +7,8 @@
 #define MAC_SIZE 16
 #define NAC_SIZE 16
 
+#define PAGE_SIZE 4096
+
 /* MAC BUffer */
 struct mac_entry{
 	int size;
@@ -47,6 +49,7 @@ typedef struct {
     char* buf;
 	int client_sock_;
 	int num_clients_;
+	bool child_done_;
 } EcallParams;
 
 struct argument {
@@ -57,6 +60,7 @@ struct argument {
 	int tree_root_size;
 	bool key_opt;
 	bool mac_opt;
+	bool persistent;
 };
 typedef struct argument Arg;
 

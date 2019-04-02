@@ -1,8 +1,9 @@
+#include "App.h"
+#include "ErrorSupport.h"
+
 #include <fstream>
 #include <iostream>
 
-#include "App.h"
-#include "ErrorSupport.h"
 #include <sys/time.h>
 #include <pthread.h>
 #include <sys/types.h>
@@ -11,6 +12,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 #define ENCLAVE_NAME "libenclave.signed.so"
 #define TOKEN_NAME "Enclave.token"
@@ -20,8 +23,11 @@ sgx_enclave_id_t global_eid = 0;
 sgx_launch_token_t token = {0};
 time_t start1, end1; 
 Arg arg;
-static hashtable *ht = NULL;
-static MACbuffer *MACbuf = NULL;
+hashtable *ht = NULL;
+MACbuffer *MACbuf = NULL;
+
+ReplayProtectedDRM *DRM = NULL;
+bool child_done_flag = false;
 
 /**
  * help function
@@ -35,6 +41,7 @@ void help() {
 	printf("-r <number of root nodes in enclave>\n");
 	printf("-y : key-hint optimization on\n");
 	printf("-c : mac bucketing optimization on\n");
+	printf("-e : persistent support on\n");
 }
 
 /**
@@ -55,8 +62,26 @@ void parse_option(){
 	printf("Num Threads: %d\n", arg.num_threads);
 	printf("Key OPT: %s\n", arg.key_opt ? "true" : "false");
 	printf("MAC OPT: %s\n", arg.mac_opt ? "true" : "false");
+	printf("Persistent Support: %s\n", arg.persistent? "true" : "false");
 }
 
+/** 
+ * signal handler
+ * to detect the exit of child process
+ **/
+void handle_signal(int signal) { 
+	pid_t p;
+	sgx_status_t ret = SGX_ERROR_UNEXPECTED;
+	int status;
+
+	if((p == waitpid(-1, &status, WNOHANG)) != -1) 
+	{
+		if(WIFEXITED(status) && WEXITSTATUS(status) == CHILD_EXIT) {
+			printf("Detect the child process done!!!\n");
+			child_done_flag = true;
+		}
+	}
+}
 /**
  * For mac bucketing optimization
  * create mac buffer
@@ -156,6 +181,8 @@ void configuration_init() {
 	arg.key_opt = false;
 	arg.mac_opt = false;
 
+	arg.persistent = false;
+
 }
 
 int SGX_CDECL main(int argc, char **argv){
@@ -185,7 +212,7 @@ int SGX_CDECL main(int argc, char **argv){
 
 	configuration_init();
 
-	while((opt = getopt(argc, argv, "hp:b:t:s:r:yc")) != -1) {
+	while((opt = getopt(argc, argv, "hp:b:t:s:r:yce")) != -1) {
 		switch(opt) {
 			case 'h':
 				help();
@@ -219,6 +246,10 @@ int SGX_CDECL main(int argc, char **argv){
 			case 'c':
 				arg.mac_opt = true;
 				break;
+	
+			case 'e':
+				arg.persistent = true;
+				break;
 
 			default:
 				fprintf(stderr, "Illegal argument \"%c\"\n", opt);
@@ -226,6 +257,16 @@ int SGX_CDECL main(int argc, char **argv){
 				exit(0);
 				break;
 		}
+	}
+
+	/* Signal */
+	struct sigaction sa;
+
+	if(arg.persistent) {
+		memset(&sa, 0, sizeof(sa));
+		sa.sa_handler = handle_signal;
+
+		sigaction(SIGCHLD, &sa, NULL);
 	}
 
 	/* Load and initialize the signed enclave */
@@ -246,6 +287,12 @@ int SGX_CDECL main(int argc, char **argv){
 
 	/* Initialize hash tree */
 	enclave_init_values(global_eid, ht, MACbuf, arg);
+
+	if(arg.persistent) {
+		/* Sealing */
+		DRM = new ReplayProtectedDRM(global_eid);
+		sealing_initialization();
+	}
 
 	/* Make socket */
 	if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
@@ -347,7 +394,7 @@ int SGX_CDECL main(int argc, char **argv){
 
 					ecallParams.client_sock_ = i;
 					ecallParams.num_clients_ = num_clients;
-
+					ecallParams.child_done_ = child_done_flag;
 
 					HotCall_requestCall(&hotEcall, 0, &ecallParams);
 	

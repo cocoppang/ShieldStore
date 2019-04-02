@@ -11,6 +11,10 @@
 #include "Enclave_u.h"
 #include "sgx_urts.h"
 
+#include "Sealing/ReplayProtectedDRM.h"
+
+#define CHILD_EXIT 222
+
 void help();
 void parse_option();
 int setNonblocking(int fd);
@@ -26,4 +30,11 @@ void message_return(char* ret, size_t ret_size, int client_sock);
 void* sbrk_o(size_t size);
 void print(const char *str);
 
+/** Persistent **/
+uint32_t sealing_initialization();
+void put_sealed_log_in_file();
+void persistent_process();
+
+extern hashtable *ht;
+extern ReplayProtectedDRM *DRM;
 #endif
