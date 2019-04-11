@@ -1,6 +1,7 @@
 #include "Enclave.h"
 
 static uint8_t* secret_object = NULL;
+uint8_t* sealed_secret_object = NULL;
 static staging_hashtable* ht_staging_enclave = NULL;
 
 /**
@@ -217,7 +218,10 @@ void ht_replace_o(entry* replace_entry, char *key, int key_size)  {
  **/
 void init_secret_object() {
 	secret_object = (uint8_t*)malloc(sizeof(uint8_t)*REPLAY_PROTECTED_SECRET_SIZE);
+	sealed_secret_object= (uint8_t*)malloc(sizeof(uint8_t)*
+			SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
 	memset(secret_object, 0, REPLAY_PROTECTED_SECRET_SIZE);
+	memset(sealed_secret_object, 0, SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
 }
 
 /**

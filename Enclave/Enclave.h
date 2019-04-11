@@ -110,6 +110,8 @@ extern MACbuffer *MACbuf_enclave;
 /* secret key */
 extern const sgx_ec_key_128bit_t gsk;
 
+extern uint8_t* sealed_secret_object;
+
 extern int ratio_root_per_buckets;
 extern BucketMAC *MACTable;
 extern Arg arg_enclave;

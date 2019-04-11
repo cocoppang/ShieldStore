@@ -67,7 +67,7 @@ void put_sealed_log_in_file() {
  * For example, allocate 4KB memory and keep write of the entry. If writing an entry to chunk overflow the size of 
  * large chunk, write the large chunk in a file and allocate another large chunk.
  **/
-void persistent_process() {
+void persistent_process(uint8_t* seal, size_t len) {
 	pid_t pid;
 	uint8_t* entry_data;
 	ssize_t err;
@@ -144,6 +144,7 @@ void persistent_process() {
 	}
 	//parent process
 	else { 
+		memcpy(DRM->sealed_activity_log, seal, len);
 		put_sealed_log_in_file();
 
 		printf("Stored sealed data in file\n");

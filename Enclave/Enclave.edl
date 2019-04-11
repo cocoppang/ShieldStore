@@ -17,6 +17,7 @@ enclave {
 		void message_return([in, size = ret_size] char* ret, size_t ret_size, int client_sock);
 		void* sbrk_o(size_t size);
 		void print([in, string] const char *str);
-		void persistent_process();
+		void persistent_process([in, size = len] uint8_t* seal,
+				size_t len);
 	};
 };

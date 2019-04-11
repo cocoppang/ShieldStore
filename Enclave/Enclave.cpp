@@ -12,7 +12,6 @@ Arg arg_enclave;
 int ratio_root_per_buckets = 0;
 
 //Flags for sealing
-uint8_t* sealed_activity_log_enclave = NULL;
 bool staging_flag = false;
 bool previous_staging_flag = false;
 bool run_flag_enclave = false;
@@ -499,8 +498,10 @@ void enclave_message_pass(void* data) {
 
 			if(run_flag_enclave == true && inst_count == 0) {
 				/** TODO after specific requests are processed, not the load process is done **/
-				update_sealed_policy(sealed_activity_log_enclave, SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
-				persistent_process();
+				update_sealed_policy(sealed_secret_object,
+						SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
+				persistent_process(sealed_secret_object,
+						SEALED_REPLAY_PROTECTED_PAY_LOAD_SIZE);
 				//init_staging_hashtable(1024);
 				init_staging_hashtable(8*1024*1024);
 				//staging phase : put the write request on the staging buffer
