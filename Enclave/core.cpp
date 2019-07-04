@@ -139,17 +139,114 @@ void get_chain_mac(int hash_val,  uint8_t *mac){
 }
 
 /**
+ * verify integrity tree &
  * update integrity tree with updated hash values
  **/
-void enclave_rebuild_tree_root(int hash_val){
+sgx_status_t enclave_rebuild_tree_root(int hash_val, int kv_pos, bool is_insert, uint8_t* prev_mac){
 
 	uint8_t temp_mac[MAC_SIZE];
+	uint8_t* aggregate_mac;
+	uint8_t* prev_aggregate_mac;
+	entry *pair;
+
+	int count = 0;
+	int i;
+	int aggregate_mac_idx = 0;
+	int index;
+	int updated_idx = -1;
+	sgx_status_t ret = SGX_SUCCESS;
 
 	memset(temp_mac, 0, MAC_SIZE);
 
-	get_chain_mac(hash_val, temp_mac);
+	/** bucket start index for verifying integrity **/
+	int start_index = (int)(hash_val/ratio_root_per_buckets)*ratio_root_per_buckets;
+
+	if(arg_enclave.mac_opt)
+	{
+		for(index = start_index; index < start_index + ratio_root_per_buckets; index++) {
+			if(index == hash_val) {
+				updated_idx = count + kv_pos;
+			}
+			count += MACbuf_enclave->entry[index].size;
+		}
+		aggregate_mac = (uint8_t*)malloc(MAC_SIZE*count);
+		memset(aggregate_mac, 0, MAC_SIZE*count);
+		for(index = start_index; index < start_index + ratio_root_per_buckets; index++) {
+			memcpy(aggregate_mac + aggregate_mac_idx, MACbuf_enclave->entry[index].mac, MAC_SIZE*MACbuf_enclave->entry[index].size);
+			aggregate_mac_idx += (MAC_SIZE*MACbuf_enclave->entry[index].size);
+		}
+	}
+	else
+	{
+		/* Check chaining size */
+		for(index = start_index; index < start_index + ratio_root_per_buckets; index++) {
+			pair = ht_enclave->table[index];
+			if(index == hash_val) {
+				updated_idx = count + kv_pos;
+			}
+			while(pair != NULL){
+				count++;
+				pair = pair->next;
+			}
+		}
+
+		//verify
+		aggregate_mac = (uint8_t*)malloc(MAC_SIZE*count);
+		memset(aggregate_mac, 0 , MAC_SIZE*count);
+
+		i = 0;
+		for(index = start_index; index < start_index + ratio_root_per_buckets; index++) {
+			pair = ht_enclave->table[index];
+			while(pair != NULL){
+				memcpy(aggregate_mac+(MAC_SIZE*i), pair->mac, MAC_SIZE);
+				i++;
+				pair = pair->next;
+			}
+		}
+
+	}
+
+	//generate previous mac
+	if(is_insert == true) {
+		prev_aggregate_mac = (uint8_t*)malloc(MAC_SIZE*(count-1));
+		memset(prev_aggregate_mac, 0, MAC_SIZE*(count-1));
+
+		memcpy(prev_aggregate_mac, aggregate_mac, updated_idx*MAC_SIZE);
+		memcpy(prev_aggregate_mac + updated_idx*MAC_SIZE, aggregate_mac + (updated_idx+1)*MAC_SIZE, (count - updated_idx - 1)*MAC_SIZE);
+
+		//verify tree root using previous mac
+		ret = sgx_rijndael128_cmac_msg(&gsk, prev_aggregate_mac, MAC_SIZE * (count - 1), &temp_mac);
+		if(ret != SGX_SUCCESS)
+			return SGX_ERROR_UNEXPECTED;
+	}
+	else {
+		prev_aggregate_mac = (uint8_t*)malloc(MAC_SIZE*count);
+		memset(prev_aggregate_mac, 0, MAC_SIZE*count);
+
+		memcpy(prev_aggregate_mac, aggregate_mac, MAC_SIZE * count);
+		memcpy(prev_aggregate_mac + updated_idx*MAC_SIZE, prev_mac, MAC_SIZE);
+
+		//verify tree root using previous mac
+		ret = sgx_rijndael128_cmac_msg(&gsk, prev_aggregate_mac, MAC_SIZE * count, &temp_mac);
+		if(ret != SGX_SUCCESS)
+			return SGX_ERROR_UNEXPECTED;
+	}
+
+	//If ShieldStore stores at least one entry, we can verify tree root
+	if(count > 1) {
+		if(memcmp(temp_mac, MACTable[hash_val/ratio_root_per_buckets].mac , MAC_SIZE) != 0)
+			return SGX_ERROR_UNEXPECTED;
+	}
+
+	//updated tree root
+	ret = sgx_rijndael128_cmac_msg(&gsk, aggregate_mac, MAC_SIZE * count, &temp_mac);
+
+	free(aggregate_mac);
+	free(prev_aggregate_mac);
 
 	memcpy(MACTable[hash_val/ratio_root_per_buckets].mac , temp_mac, MAC_SIZE);
+
+	return ret;
 }
 
 /**

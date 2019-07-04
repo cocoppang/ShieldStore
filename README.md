@@ -28,7 +28,8 @@ Ubuntu 16.04.5
 For using sealing functionality, we should the kernel up to ubuntu 16.04.(For building platform service)
 For using tcmalloc in 16.04, we should download a rebuilt version of tcmalloc library from [here](https://01.org/intel-softwareguard-extensions/downloads/intel-sgx-linux-1.8-release).
 
-## Usange
+## Usage
+
 	$ ./app	
 
 First, run the server with above command, and run client.
