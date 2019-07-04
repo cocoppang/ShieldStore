@@ -58,6 +58,7 @@ void enclave_set(char *cipher) {
 	char* plain_key_val = NULL;
 	uint8_t nac[NAC_SIZE];
 	uint8_t mac[MAC_SIZE];
+	uint8_t prev_mac[MAC_SIZE];
 	uint8_t updated_nac[NAC_SIZE];
 
 	uint32_t key_size;
@@ -68,6 +69,8 @@ void enclave_set(char *cipher) {
 	char *tok;
 	char *temp_;
 	entry * ret_entry;
+
+	bool is_insert = false;
 
 	tok = strtok_r(cipher+4," ",&temp_);
 	key_size = strlen(tok)+1;
@@ -100,15 +103,11 @@ void enclave_set(char *cipher) {
 			print("MAC verification failed");
 		}
 
-		ret = enclave_verify_tree_root(hash_val);
-
-		if(ret != SGX_SUCCESS)
-		{
-			print("Tree verification failed");
-		}
-
 		memcpy(nac, updated_nac, NAC_SIZE);
 		free(plain_key_val);
+
+		is_insert = false;
+		memcpy(prev_mac, ret_entry->mac, MAC_SIZE);
 	}
 	//insert
 	else
@@ -116,7 +115,9 @@ void enclave_set(char *cipher) {
 		/* Make initial nac */
 		sgx_read_rand(nac, NAC_SIZE);
 		assert(plain_key_val == NULL);
+		is_insert = true;
 	}
+
 
 	/* We have to encrypt key and value together, so make con field */
 	key_val = (char*)malloc(sizeof(char)*(key_size+val_size));
@@ -127,7 +128,12 @@ void enclave_set(char *cipher) {
 
 	ht_set_o(ret_entry, key, key_val, nac, mac, key_size, val_size, kv_pos);
 
-	enclave_rebuild_tree_root(hash_val);
+	ret = enclave_rebuild_tree_root(hash_val, kv_pos, is_insert, prev_mac);
+
+	if(ret != SGX_SUCCESS)
+	{
+		print("Tree verification failed");
+	}
 
 	memset(cipher, 0, arg_enclave.max_buf_size);
 	memcpy(cipher, key, key_size);
@@ -203,6 +209,7 @@ void enclave_append(char *cipher){
 	char* plain_key_val;
 	uint8_t nac[NAC_SIZE];
 	uint8_t mac[MAC_SIZE];
+	uint8_t prev_mac[MAC_SIZE];
 	uint8_t updated_nac[NAC_SIZE];
 
 	uint32_t key_size;
@@ -246,15 +253,8 @@ void enclave_append(char *cipher){
 			print("MAC verification failed");
 		}
 
-		ret = enclave_verify_tree_root(hash_val);
-
-		if(ret != SGX_SUCCESS)
-		{
-			print("set");
-			print("Tree verification failed");
-		}
-
 		memcpy(nac, updated_nac, NAC_SIZE);
+		memcpy(prev_mac, ret_entry->mac, MAC_SIZE);
 	}
 	//insert
 	else
@@ -262,6 +262,7 @@ void enclave_append(char *cipher){
 		print("There's no data in the database");
 		return;
 	}
+
 
 	/* Make appended key-value */
 	key_val = (char*)malloc(sizeof(char)*(ret_entry->key_size + ret_entry->val_size + val_size - 1));
@@ -272,7 +273,13 @@ void enclave_append(char *cipher){
 
 	ht_append_o(ret_entry, key, key_val, nac, mac, key_size, ret_entry->val_size + val_size - 1, kv_pos);
 
-	enclave_rebuild_tree_root(hash_val);
+	ret = enclave_rebuild_tree_root(hash_val, kv_pos, false, prev_mac);
+
+	if(ret != SGX_SUCCESS)
+	{
+		print("Tree verification failed");
+	}
+
 
 	memset(cipher, 0, arg_enclave.max_buf_size);
 	memcpy(cipher, key, key_size);

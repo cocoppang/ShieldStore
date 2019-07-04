@@ -31,7 +31,8 @@ void ht_append_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, u
 
 /** Security core functions **/
 void get_chain_mac(int hash_val,  uint8_t *mac);
-void enclave_rebuild_tree_root(int hash_val);
+//void enclave_rebuild_tree_root(int hash_val);
+sgx_status_t enclave_rebuild_tree_root(int hash_val, int kv_pos, bool is_insert, uint8_t* mac);
 sgx_status_t enclave_verify_tree_root(int hash_val);
 void enclave_encrypt(char* key_val, char *cipher, uint8_t key_idx, uint32_t key_len, uint32_t val_len, uint8_t *nac, uint8_t *mac);
 sgx_status_t enclave_verification(char *cipher, uint8_t key_idx, uint32_t key_len, uint32_t val_len, uint8_t *nac, uint8_t *mac);
