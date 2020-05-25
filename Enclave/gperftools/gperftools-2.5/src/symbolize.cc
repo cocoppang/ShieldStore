@@ -87,7 +87,8 @@ static const char* GetProgramInvocationName() {
 #else
   extern char* program_invocation_name;  // gcc provides this
 #endif
-  return program_invocation_name;
+  //return program_invocation_name;
+  return NULL;
 #elif defined(__MACH__)
   // We don't want to allocate memory for this since we may be
   // calculating it when memory is corrupted.
