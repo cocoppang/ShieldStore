@@ -3,7 +3,6 @@
 
 #include "App.h"
 #include "ErrorSupport.h"
-#include <sys/time.h>
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -12,16 +11,22 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
+#include <chrono>
+
 #define ENCLAVE_NAME "libenclave.signed.so"
 #define TOKEN_NAME "Enclave.token"
 
 // Global variables
 sgx_enclave_id_t global_eid = 0;
 sgx_launch_token_t token = {0};
-time_t start1, end1; 
 Arg arg;
 static hashtable *ht = NULL;
 static MACbuffer *MACbuf = NULL;
+
+std::chrono::time_point<std::chrono::high_resolution_clock> start1;
+std::chrono::time_point<std::chrono::high_resolution_clock> end1;
+std::chrono::time_point<std::chrono::high_resolution_clock> mid1;
+
 
 /**
  * help function
@@ -326,7 +331,7 @@ int SGX_CDECL main(int argc, char **argv){
 
 					if(run_phase == true && num_connection == 0) {
 						printf("Time check start\n");
-						start1 = time(0);
+						mid1 = std::chrono::high_resolution_clock::now();
 					}
 					num_connection++;
 
@@ -334,6 +339,8 @@ int SGX_CDECL main(int argc, char **argv){
 					if(num_connection > num_clients) {
 						num_clients = num_connection;
 						printf("num_clients: %d\n", num_clients);
+
+						start1 = std::chrono::high_resolution_clock::now();
 					}
 				}
 				else {
@@ -386,13 +393,15 @@ int SGX_CDECL main(int argc, char **argv){
 		pthread_join(threads[i],(void **)&status);
 	}
 
+	end1 = std::chrono::high_resolution_clock::now();
 
-	end1 = time(0); 
-
+	std::chrono::duration<double> elapsed;
 	FILE *f;
 	f = fopen("result.txt", "a");
-	fprintf(f,"\n Thread: %d Execution time for Running : %f", arg.num_threads, difftime(end1,start1));
-
+	elapsed = mid1 - start1;
+	fprintf(f,"\n Thread: %d Execution time for Loading : %lf", arg.num_threads, elapsed.count());
+	elapsed = end1 - mid1;
+	fprintf(f,"\n Thread: %d Execution time for Running : %lf", arg.num_threads, elapsed.count());
 	fclose(f);
 
 	free(threads);
