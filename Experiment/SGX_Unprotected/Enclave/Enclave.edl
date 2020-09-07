@@ -1,0 +1,15 @@
+enclave {
+	include "../Include/userdef.h"
+
+	trusted {
+		public void region_read([in, out] struct region **page, int size);
+		public void region_write([in, out] struct region **page, int size);
+		public void region_do_nothing([in, out] struct region **page, int size);
+	};
+
+	untrusted {
+		void write_o(int i, int size);
+		void print([in, string] const char *string);
+		void print_int(int d);
+	};
+};
