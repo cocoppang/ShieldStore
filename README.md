@@ -35,7 +35,7 @@ First, run the server with above command, and run client.
 ## Paper
 
 For the details, please refer this paper.
-"ShieldStore: Shiled In-memory Key-value Storage with SGX" [EuroSys'19]
+"ShieldStore: Shielded In-memory Key-value Storage with SGX" [EuroSys'19]
 
 ## Question?
 
