@@ -1,0 +1,13 @@
+App/App.o
+App/Enclave_u.c
+App/Enclave_u.h
+App/Enclave_u.o
+App/ErrorSupport.o
+Enclave/Enclave.o
+Enclave/Enclave_t.c
+Enclave/Enclave_t.h
+Enclave/Enclave_t.o
+app
+libenclave.signed.so
+libenclave.so
+result.txt

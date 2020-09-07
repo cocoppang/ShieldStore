@@ -1,0 +1,15 @@
+enclave {
+    trusted {
+		public void region_create();
+		public void region_touch();
+		public void region_read(int size);
+		public void region_write(int size);
+		public void region_do_nothing(int size);
+		public void region_destroy();
+	};
+
+	untrusted {
+		void print([in, string] const char *string);
+		void print_int(int d);
+	};
+};
