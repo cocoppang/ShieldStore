@@ -1,0 +1,23 @@
+enclave {
+	from "sgx_tstdc.edl" import *;
+	from "/home/thkim/eleos_shieldstore/eleos_core/trustedlib_lib_services/static_trusted/lib_services.edl" import *;
+
+	include "sgx_thread.h"
+	include "common.h"
+
+    trusted {
+		public void ht_create(int size);
+		//public void sgx_event_handler([in] char buf[64], [in, out] char line[64]);
+		public void enclave_process([in] int count[8],
+									[in] char **inst[8],
+									[in] int count2[8],
+									[in] char **inst2[8]);
+		public void ht_destroy(int size);
+	};
+
+	untrusted {
+		void print([in, string] const char *string);
+		void print_int(int d);
+		void dummy();
+	};
+};
