@@ -1,0 +1,18 @@
+enclave {
+	from "sgx_tstdc.edl" import *;
+
+	include "sgx_thread.h"
+	include "common.h"
+
+    trusted {
+		public void ht_create(int size);
+		public void enclave_process(int count, [in, size=count] char **inst, int count2, [in, size=count2] char **inst2);
+		public void ht_destroy(int size);
+	};
+
+	untrusted {
+		void print([in, string] const char *string);
+		void print_int(int d);
+		void dummy();
+	};
+};
