@@ -66,6 +66,8 @@ entry * ht_get_o(char *key, int32_t key_size, char **plain_key_val, int* kv_pos,
 			pair = pair->next;
 			(*kv_pos)++;
 		}
+
+		return NULL;
 	}
 
 	/** When the key optimization is on, ShieldStore runs two-step search **/
@@ -119,9 +121,11 @@ entry * ht_newpair(int key_size, int val_size, uint8_t key_hash, char *key_val, 
 }
 
 /* Insert a key-value pair into a hash table. */
-void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint8_t *mac, uint32_t key_len, uint32_t val_len, int kv_pos) {
+void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint8_t *mac, uint32_t key_len, uint32_t val_len, int kv_pos)
+{
 	int bin = 0;
 	uint8_t key_hash = 0;
+	int pos = -1;
 
 	entry *newpair = NULL;
 
@@ -129,27 +133,33 @@ void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint
 	key_hash = key_hash_func(key);
 
 	//Update
-	if(updated_entry != NULL) {
-		if(updated_entry->val_size != val_len)
-			updated_entry->key_val = (char*)ocall_tc_realloc(updated_entry->key_val, sizeof(char)*(key_len+val_len));
+	if (updated_entry != NULL) {
+		if (updated_entry->val_size != val_len)
+			updated_entry->key_val = (char*)ocall_tc_realloc(updated_entry->key_val, sizeof(char) * (key_len + val_len));
 		memcpy(updated_entry->key_val, key_val, key_len+val_len);
 		memcpy(updated_entry->nac, nac, NAC_SIZE);
 		memcpy(updated_entry->mac, mac, MAC_SIZE);
 		updated_entry->val_size = val_len;
+
+		if (arg_enclave.mac_opt) {
+			/** The order of MAC bucket is reversed to hash chain order **/
+			pos = MACbuf_enclave->entry[bin].size - kv_pos - 1;
+			memcpy(MACbuf_enclave->entry[bin].mac + (MAC_SIZE * pos), mac, MAC_SIZE);
+		}
 	}
 	//Insert
 	else {
 		newpair = ht_newpair(key_len, val_len, key_hash, key_val, nac, mac);
 
-		if(newpair == NULL)
+		if (!newpair)
 			print("new pair problem");
 
 		/** New-pair should be inserted into the first entry of the bucket chain **/
-		if(updated_entry == ht_enclave->table[bin]){
+		if (updated_entry == ht_enclave->table[bin]){
 			newpair->next = NULL;
 			ht_enclave->table[bin] = newpair;
 		}
-		else if(updated_entry == NULL) {
+		else if (!updated_entry) {
 			newpair->next = ht_enclave->table[bin];
 			ht_enclave->table[bin] = newpair;
 		}
@@ -157,17 +167,14 @@ void ht_set_o(entry* updated_entry, char *key, char *key_val, uint8_t *nac, uint
 			print("do not enter here");
 		}
 
-		if(arg_enclave.mac_opt)
-		{
+		if (arg_enclave.mac_opt) {
 			//mac buffer increase
 			MACbuf_enclave->entry[bin].size++;
+			/** The order of MAC bucket is reversed to hash chain order **/
+			memcpy(MACbuf_enclave->entry[bin].mac + (MAC_SIZE * kv_pos), mac, MAC_SIZE);
 		}
 	}
-	if(arg_enclave.mac_opt)
-	{
-		/** The order of MAC bucket is reversed to hash chain order **/
-		memcpy(MACbuf_enclave->entry[bin].mac+(MAC_SIZE*kv_pos), mac, MAC_SIZE);
-	}
+
 }
 
 /* append the value of key-value pair */
