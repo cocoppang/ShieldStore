@@ -65,11 +65,7 @@ public class KVTracerClient extends DB {
           BufferedReader reader = new BufferedReader(new FileReader(keymapFile));
           String keyline = null;
           while ((keyline = reader.readLine()) != null) {
-            String[] parts = decodeKey(keyline);  
-            if (parts.length != 3) {
-              throw new DBException("invalid keyline " + keyline + " in keymap file");
-            }
-            String prefix = encodeKey(parts[0], parts[1], "");
+            String prefix = keyline;
             HashSet<String> keys = mKeyMap.get(prefix);
             if (keys == null) {
               keys = new HashSet<String>();
@@ -115,7 +111,7 @@ public class KVTracerClient extends DB {
 	 * Create a key from table name, key and field by escaping and concatenate them.
 	 */
 	public static String encodeKey(String table, String key, String field) {
-    return escape(table) + SEP + escape(key) + SEP + escape(field); 
+    return escape(key);
 	}
 
 	/**
@@ -177,14 +173,14 @@ public class KVTracerClient extends DB {
       if (fields != null) {
         for (String field:fields) {
           String encKey = encodeKey(table, key, field);
-          mOpWriter.write("GET|" + encKey + "\n");
+          mOpWriter.write("GET " + encKey + "\n");
         }
       } else {
         String prefix = encodeKey(table, key, "");
         HashSet<String> keys = mKeyMap.get(prefix);
         if (keys != null) {
           for (String k:keys) {
-            mOpWriter.write("GET|" + k + "\n");
+            mOpWriter.write("GET " + k + "\n");
           }
         }
       }
@@ -214,7 +210,7 @@ public class KVTracerClient extends DB {
         }
         keys.add(encKey);
         String value = entry.getValue().toString();
-        mOpWriter.write("UPDATE|" + encKey + "|" + value + "\n");
+        mOpWriter.write("SET " + encKey + " " + value + "\n");
       }
 		  return Status.OK;
     } catch (IOException exception) {

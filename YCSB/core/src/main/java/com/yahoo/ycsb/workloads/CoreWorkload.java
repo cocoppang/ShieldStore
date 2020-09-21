@@ -480,12 +480,16 @@ public class CoreWorkload extends Workload {
       keynum = Utils.hash(keynum);
     }
     String value = Long.toString(keynum);
+		if (value.length() > 16) {
+			String tmp = value.substring(0, 16);
+			value = tmp;
+		}
     int fill = zeropadding - value.length();
     String prekey = "user";
     for (int i = 0; i < fill; i++) {
       prekey += '0';
     }
-    return prekey + value;
+    return value;
   }
 
   /**
