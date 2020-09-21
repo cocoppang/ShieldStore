@@ -90,7 +90,8 @@ DATABASES = {
     "solr"         : "com.yahoo.ycsb.db.solr.SolrClient",
     "solr6"        : "com.yahoo.ycsb.db.solr6.SolrClient",
     "tarantool"    : "com.yahoo.ycsb.db.TarantoolClient",
-    "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient"
+    "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient",
+    "kvtracer"    : "com.yahoo.ycsb.db.KVTracerClient"
 }
 
 OPTIONS = {
