@@ -1,0 +1,69 @@
+
+CC = gcc
+CXX = g++
+CFLAGS =  -g -O2 -DNO_HEAP_CHECK -DTCMALLOC_SGX -DTCMALLOC_NO_ALIASES -fstack-protector -ffreestanding -nostdinc -fvisibility=hidden -fPIC
+CPPFLAGS = -I/home/sgx1/sgx/linux-sgx/common/inc -I/home/sgx1/sgx/linux-sgx/common/inc/tlibc -I/home/sgx1/sgx/linux-sgx/common/inc/internal/ -I/home/sgx1/sgx/linux-sgx/sdk/tlibstdcxx/stlport -I/home/sgx1/sgx/linux-sgx/sdk/trts/
+CXXFLAGS =  -g -O2 -DNO_HEAP_CHECK -DTCMALLOC_SGX -DTCMALLOC_NO_ALIASES -fstack-protector -ffreestanding -nostdinc -fvisibility=hidden -fPIC -nostdinc++
+
+SPINLOCK_INCLUDES = ./Enclave/gperftools/gperftools-2.5/src/base/spinlock.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/spinlock_internal.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/atomicops.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/atomicops-internals-macosx.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/atomicops-internals-linuxppc.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/atomicops-internals-windows.h \
+                    ./Enclave/gperftools/gperftools-2.5/src/base/atomicops-internals-x86.h
+
+
+S_TCMALLOC_MINIMAL_INCLUDES = ./Enclave/gperftools/gperftools-2.5/src/common.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/internal_logging.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/system-alloc.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/packed-cache-inl.h \
+                              $(SPINLOCK_INCLUDES) \
+                              ./Enclave/gperftools/gperftools-2.5/src/tcmalloc_guard.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/base/commandlineflags.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/base/basictypes.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/pagemap.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/sampler.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/central_freelist.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/linked_list.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/libc_override.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/libc_override_gcc_and_weak.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/libc_override_glibc.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/libc_override_osx.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/libc_override_redefine.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/page_heap.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/page_heap_allocator.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/span.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/static_vars.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/symbolize.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/thread_cache.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/stack_trace_table.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/base/thread_annotations.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/malloc_hook-inl.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/malloc_hook_mmap_linux.h \
+                              ./Enclave/gperftools/gperftools-2.5/src/malloc_hook_mmap_freebsd.h
+
+SG_TCMALLOC_MINIMAL_INCLUDES = ./Enclave/gperftools/gperftools-2.5/src/gperftools/malloc_hook.h \
+                               ./Enclave/gperftools/gperftools-2.5/src/gperftools/malloc_hook_c.h \
+                               ./Enclave/gperftools/gperftools-2.5/src/gperftools/malloc_extension.h \
+                               ./Enclave/gperftools/gperftools-2.5/src/gperftools/malloc_extension_c.h
+
+TCMALLOC_MINIMAL_INCLUDES = $(S_TCMALLOC_MINIMAL_INCLUDES) $(SG_TCMALLOC_MINIMAL_INCLUDES)
+
+SYSTEM_ALLOC_CC = src/system-alloc.cc
+libtcmalloc_minimal_internal_la_SOURCES = src/common.cc \
+                                          src/internal_logging.cc \
+                                          $(SYSTEM_ALLOC_CC) \
+                                          src/central_freelist.cc \
+                                          src/page_heap.cc \
+                                          src/sampler.cc \
+                                          src/span.cc \
+                                          src/stack_trace_table.cc \
+                                          src/static_vars.cc \
+                                          src/symbolize.cc \
+                                          src/thread_cache.cc \
+                                          src/malloc_hook.cc \
+                                          src/malloc_extension.cc \
+#                                          $(TCMALLOC_MINIMAL_INCLUDES)
+
+
