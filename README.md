@@ -14,8 +14,13 @@ You can follow the list as below.
 
 For the support of Intel SGX, sgx-linux should be required.
 
+Recommanded version is 1.8 for both SDK and Driver. 
+
 * [Intel SGX Linux 1.8 version](https://github.com/intel/linux-sgx/tree/sgx_1.8)
 * [Intel SGX Linux driver](https://github.com/intel/linux-sgx-driver/tree/sgx_driver_1.8)
+
+However, ShieldStore is available on Intel SGX SDK version (1.9, 2.2).
+For later versions, we are testing.
 
 ## Build
 
