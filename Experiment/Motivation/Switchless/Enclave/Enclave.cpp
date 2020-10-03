@@ -435,18 +435,3 @@ void enclave_message_pass(void* data) {
 
 	return;
 }
-
-/**
- * Hotcalls responder
- **/
-void EcallStartResponder( HotCall* hotEcall )
-{
-	void (*callbacks[1])(void*);
-	callbacks[0] = enclave_message_pass;
-
-	HotCallTable callTable;
-	callTable.numEntries = 1;
-	callTable.callbacks  = callbacks;
-
-	HotCall_waitForCall( hotEcall, &callTable );
-}

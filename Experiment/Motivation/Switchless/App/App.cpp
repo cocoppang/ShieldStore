@@ -140,18 +140,6 @@ void *load_and_initialize_threads(void *temp){
 }
 
 /**
- * For hotcalls
- **/
-void* EnclaveResponderThread( void* hotEcallAsVoidP )
-{
-	//To be started in a new thread
-	HotCall *hotEcall = (HotCall*)hotEcallAsVoidP;
-	//EcallStartResponder( global_eid, hotEcall );
-
-	return NULL;
-}
-
-/**
  * init default configuration values
  **/
 void configuration_init() {
@@ -311,7 +299,6 @@ int SGX_CDECL main(int argc, char **argv){
 	threads = (pthread_t*)malloc(sizeof(pthread_t)*(arg.num_threads+1));
 
 	/* For HotCall & Worker Thread */
-	pthread_create(&threads[0], NULL, &EnclaveResponderThread, (void *)&hotEcall); 
 	for(int i=1;i<arg.num_threads+1;i++){
 		pthread_create(&threads[i], NULL, &load_and_initialize_threads, (void *)NULL); 
 	}
@@ -366,8 +353,6 @@ int SGX_CDECL main(int argc, char **argv){
 					ecallParams.client_sock_ = i;
 					ecallParams.num_clients_ = num_clients;
 
-
-					//HotCall_requestCall(&hotEcall, 0, &ecallParams);
 					enclave_message_pass(global_eid, &ecallParams);
 	
 					if(strncmp(ecallParams.buf, "LOADDONE", 9) == 0) {
@@ -399,9 +384,7 @@ int SGX_CDECL main(int argc, char **argv){
 		}
 	}
 
-	StopResponder(&hotEcall);
-
-	for(int i = 0; i < arg.num_threads+1;i++) {
+	for(int i = 1; i < arg.num_threads+1;i++) {
 		pthread_join(threads[i],(void **)&status);
 	}
 

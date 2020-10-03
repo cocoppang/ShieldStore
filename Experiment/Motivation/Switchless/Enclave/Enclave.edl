@@ -9,7 +9,6 @@ enclave {
    trusted {
 		public void enclave_init_values([in] hashtable* ht, [in] MACbuffer* MACbuf, Arg arg);
 		public void enclave_worker_thread([in] hashtable *ht, [in] MACbuffer *MACbuf);
-        	//public void EcallStartResponder( [user_check] HotCall* fastEcall );                                                                                           
 		public void enclave_message_pass([user_check]void* data) transition_using_threads;
     };
 	untrusted {
