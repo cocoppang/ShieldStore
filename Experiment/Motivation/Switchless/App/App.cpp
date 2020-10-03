@@ -12,6 +12,7 @@
 #include <fcntl.h>
 
 #include <chrono>
+#include <sgx_uswitchless.h>
 
 #define ENCLAVE_NAME "libenclave.signed.so"
 #define TOKEN_NAME "Enclave.token"
@@ -101,7 +102,7 @@ hashtable * ht_create(int size){
 /**
  * load and initialize the enclave     
  **/
-sgx_status_t load_and_initialize_enclave(sgx_enclave_id_t *eid){
+sgx_status_t load_and_initialize_enclave(sgx_enclave_id_t *eid,const sgx_uswitchless_config_t* us_config){
 	sgx_status_t ret = SGX_SUCCESS;
 	int retval = 0;
 	int updated = 0;
@@ -110,8 +111,13 @@ sgx_status_t load_and_initialize_enclave(sgx_enclave_id_t *eid){
 	if(*eid != 0)
 		sgx_destroy_enclave(*eid);
 
+        void* enclave_ex_p[32] = { 0 };
+    
+        enclave_ex_p[SGX_CREATE_ENCLAVE_EX_SWITCHLESS_BIT_IDX] = (void*)us_config;
+
 	// Step 2: load the enclave
-	ret = sgx_create_enclave(ENCLAVE_NAME, SGX_DEBUG_FLAG, &token, &updated, eid, NULL);
+	ret = sgx_create_enclave_ex(ENCLAVE_NAME, SGX_DEBUG_FLAG, &token, &updated, eid, NULL,SGX_CREATE_ENCLAVE_EX_SWITCHLESS, enclave_ex_p);
+
 	if(ret != SGX_SUCCESS)
 		return ret;
 
@@ -140,7 +146,7 @@ void* EnclaveResponderThread( void* hotEcallAsVoidP )
 {
 	//To be started in a new thread
 	HotCall *hotEcall = (HotCall*)hotEcallAsVoidP;
-	EcallStartResponder( global_eid, hotEcall );
+	//EcallStartResponder( global_eid, hotEcall );
 
 	return NULL;
 }
@@ -164,6 +170,11 @@ void configuration_init() {
 }
 
 int SGX_CDECL main(int argc, char **argv){
+
+        /* Configuration for Switchless SGX */
+        sgx_uswitchless_config_t us_config = SGX_USWITCHLESS_CONFIG_INITIALIZER;
+        us_config.num_uworkers = 2;
+        us_config.num_tworkers = 2;
 
 	/* Socket variable */
 	int server_sockfd, client_sockfd;
@@ -234,7 +245,7 @@ int SGX_CDECL main(int argc, char **argv){
 	}
 
 	/* Load and initialize the signed enclave */
-	ret = load_and_initialize_enclave(&global_eid);
+	ret = load_and_initialize_enclave(&global_eid,&us_config);
 	if(ret != SGX_SUCCESS){
 		ret_error_support(ret);
 		return -1;
@@ -356,7 +367,8 @@ int SGX_CDECL main(int argc, char **argv){
 					ecallParams.num_clients_ = num_clients;
 
 
-					HotCall_requestCall(&hotEcall, 0, &ecallParams);
+					//HotCall_requestCall(&hotEcall, 0, &ecallParams);
+					enclave_message_pass(global_eid, &ecallParams);
 	
 					if(strncmp(ecallParams.buf, "LOADDONE", 9) == 0) {
 						close(i);
