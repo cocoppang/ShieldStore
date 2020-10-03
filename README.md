@@ -20,7 +20,6 @@ Recommanded version is 1.8 for both SDK and Driver.
 * [Intel SGX Linux driver](https://github.com/intel/linux-sgx-driver/tree/sgx_driver_1.8)
 
 However, ShieldStore is available on Intel SGX SDK version 1.9, and 2.2 along with Intel SGX Driver version 1.9, 2.0, and 2.1.
-We are working on for the later version support.
 
 ## Build
 
