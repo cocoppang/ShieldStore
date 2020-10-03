@@ -30,7 +30,9 @@ For later versions, we are testing.
 
 Ubuntu 16.04.5
 
-For using tcmalloc in 16.04, we should download a rebuilt version of tcmalloc library from [here](https://01.org/intel-softwareguard-extensions/downloads/intel-sgx-linux-1.8-release).
+For using tcmalloc in 16.04, we should download a rebuilt version of tcmalloc library from [here](https://01.org/intel-softwareguard-extensions/downloads/intel-sgx-linux-1.8-release) or use libsgx\_tcmalloc.a in this repo.
+
+Replace libsgx\_tcmalloc.a from SDK in the installed path with this version. 
 
 ## Usage
 	$ ./app	
