@@ -12,3 +12,6 @@ Naive Key-Value Storage without Intel SGX
 
 5. Baseline\_kvs
 Naive Key-Value Storage with Intel SGX
+
+6. Switchless
+ShieldStore with Switchless call (instead of Hotcall)
